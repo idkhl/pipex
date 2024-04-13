@@ -6,38 +6,64 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 09:59:18 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/03/18 11:00:24 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/04/13 13:49:27 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/libft.h"
 
+// char	*ft_strjoin(char *s1, char *s2)
+// {
+// 	size_t	i;
+// 	size_t	c;
+// 	char	*str;
+// 	int 	s1_allocated = 0; // Flag to track if s1 was dynamically allocated
+
+// 	if (!s1)
+// 	{
+// 		s1 = (char *)malloc(1 * sizeof(char));
+// 		if (!s1)
+// 			return (NULL);
+// 		s1[0] = '\0';
+// 		s1_allocated = 1; // Set the flag to true
+// 	}
+// 	if (!s1 || !s2)
+// 		return (NULL);
+// 	str = malloc((ft_strlen(s1) + ft_strlen(s2) + 1) * sizeof(char));
+// 	if (str == NULL)
+// 	{
+// 		if (s1_allocated) // If s1 was dynamically allocated, free it before returning NULL
+// 			free(s1);
+// 		return (NULL);
+// 	}
+// 	i = -1;
+// 	c = 0;
+// 	if (s1)
+// 		while (s1[++i] != '\0')
+// 			str[i] = s1[i];
+// 	while (s2[c] != '\0')
+// 		str[i++] = s2[c++];
+// 	str[ft_strlen(s1) + ft_strlen(s2)] = '\0';
+// 	if (s1_allocated) // If s1 was dynamically allocated, free it
+// 		free(s1);
+// 	return (str);
+// }
+
 char	*ft_strjoin(char *s1, char *s2)
 {
-	size_t	i;
-	size_t	c;
-	char	*str;
+	char	*res;
+	int		len;
 
-	if (!s1)
-	{
-		s1 = (char *)malloc(1 * sizeof(char));
-		s1[0] = '\0';
-	}
 	if (!s1 || !s2)
 		return (NULL);
-	str = malloc((ft_strlen(s1) + ft_strlen(s2) + 1) * sizeof(char));
-	if (str == NULL)
+	len = ft_strlen(s1) + ft_strlen(s2) + 1;
+	res = (char *)malloc(len * sizeof(char));
+	if (res == NULL)
 		return (NULL);
-	i = -1;
-	c = 0;
-	if (s1)
-		while (s1[++i] != '\0')
-			str[i] = s1[i];
-	while (s2[c] != '\0')
-		str[i++] = s2[c++];
-	str[ft_strlen(s1) + ft_strlen(s2)] = '\0';
-	free(s1);
-	return (str);
+	*res = '\0';
+	ft_strlcat(res, s1, len);
+	ft_strlcat(res, s2, len);
+	return (res);
 }
 
 /*
