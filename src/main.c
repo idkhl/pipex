@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 18:18:08 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/04/15 17:36:40 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/04/15 17:53:32 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ int	parse_cmd(char **arg)
 	free(path);
 	return (0);
 }
+
 
 int	parsing(char **av)
 {
