@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 18:18:08 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/04/17 17:41:52 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/04/18 14:10:01 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,10 +38,9 @@ char	*parse_cmd(char **arg, t_pipex *pipex)
 		free(tmp);
 		if (access(bin, F_OK | X_OK) == 0)
 			return (bin);
-		printf("%s\n", bin);
+		free(bin);
 		i++;
 	}
-	// malloc_free(&bin);
 	return (NULL);
 }
 
@@ -62,7 +61,8 @@ char	**getPaths(char **envp)
 	char	**path;
 
 	tmp = getPathLine(envp);
-	//^ !tmp
+	if (!tmp)
+		return (NULL);
 	tmp += 5;
 	path = ft_split(tmp, ':');
 	if (!path)
@@ -71,16 +71,8 @@ char	**getPaths(char **envp)
 	return (path);
 }
 
-int	parsing(char **av, char **envp)
+int	parsing(char **av, char **envp, t_pipex *pipex)
 {
-	t_pipex	*pipex;
-
-	pipex = (t_pipex *)malloc(sizeof(t_pipex));
-	if (!pipex)
-	{
-		free(pipex);
-		return (wrong_args(4), -1);
-	}
 	pipex->args1 = ft_split(av[2], ' ');
 	pipex->args2 = ft_split(av[3], ' ');
 	if (!pipex->args1 || !pipex->args2)
@@ -96,12 +88,36 @@ int	parsing(char **av, char **envp)
 	return (0);
 }
 
+void	free_tab(t_pipex *pipex)
+{
+	malloc_free(pipex->args1);
+	malloc_free(pipex->args2);
+	malloc_free(pipex->path);
+	free(pipex->cmd1);
+	free(pipex->cmd2);
+	free(pipex);
+}
+
+void	execCmd1(t_pipex *pipex)
+{
+	execve(pipex->cmd1, pipex->args1, NULL);
+}
+
 int	main(int ac, char **av, char **envp)
 {
+	t_pipex	*pipex;
+
 	if (ac != 5 || !av)
 		return (wrong_args(1), -1);
-	if (parsing(av, envp) == -1)
+	pipex = (t_pipex *)malloc(sizeof(t_pipex));
+	if (!pipex)
+		return (wrong_args(4), -1);
+	if (parsing(av, envp, pipex) == -1)
+	{
+		free_tab(pipex);
 		return (-1);
-	// init_tab(av);
+	}
+	execCmd1(pipex);
+	free_tab(pipex);
 	return (0);
 }
