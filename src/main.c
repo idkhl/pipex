@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 18:18:08 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/04/18 19:20:40 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/04/19 19:39:31 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,10 @@ void	wrong_args(int nb)
 		ft_printf("FILE1 DOES NOT EXIST\n");
 	if (nb == 4)
 		ft_printf("MEMORY ALLOCATION ERROR\n");
+	if (nb == 5)
+		ft_printf("FD ERROR\n");
+	if (nb == 6)
+		ft_printf("EXECUTION ERROR\n");
 }
 
 char	*parse_cmd(char **arg, t_pipex *pipex)
@@ -44,7 +48,7 @@ char	*parse_cmd(char **arg, t_pipex *pipex)
 	return (NULL);
 }
 
-char	*getPathLine(char **envp)
+char	*get_pathline(char **envp)
 {
 	while (envp)
 	{
@@ -55,7 +59,7 @@ char	*getPathLine(char **envp)
 	return (NULL);
 }
 
-char	**getPaths(char **envp)
+char	**get_paths(char **envp)
 {
 	char	*tmp;
 	char	**path;
@@ -67,18 +71,17 @@ char	**getPaths(char **envp)
 	path = ft_split(tmp, ':');
 	if (!path)
 		return (NULL);
-	// printf("%s\n", tmp);
 	return (path);
 }
 
 int	parsing(char **av, char **envp, t_pipex *pipex)
 {
+	
 	pipex->args1 = ft_split(av[2], ' ');
 	pipex->args2 = ft_split(av[3], ' ');
 	if (!pipex->args1 || !pipex->args2)
 		return (0);
 	pipex->path = getPaths(envp);
-	// printf("%s\n", pipex->path[0]);
 	pipex->cmd1 = parse_cmd(pipex->args1, pipex);
 	pipex->cmd2 = parse_cmd(pipex->args2, pipex);
 	if (access(av[1], R_OK) == -1)
@@ -98,16 +101,52 @@ void	free_tab(t_pipex *pipex)
 	free(pipex);
 }
 
-void	execCmd1(t_pipex *pipex, char **av)
+void	exec_cmd(t_pipex *pipex, char **envp)
 {
-	// dup2()
-	int fd;
+	pid_t	pid;
 
-	fd = open(av[4], O_WRONLY | O_CREAT, 0644);
-	dup2(fd, STDOUT_FILENO);
-	close(fd);
-	execve(pipex->cmd2, pipex->args2, NULL);
+	pid = fork();
+	if (pid < 0)
+		return ;
+	if (pid == 0)
+	{
+		if (dup2(pipex->fd1, STDIN_FILENO) == -1
+			|| dup2(pipex->fd[1], STDOUT_FILENO) == -1)
+			return ;
+		close(pipex->fd[0]);
+		if (execve(pipex->cmd1, pipex->args1, envp) == -1)
+			return (wrong_args(6));
+	}
+	else
+	{
+		if (dup2(pipex->fd[0], STDIN_FILENO) == -1
+			|| dup2(pipex->fd2, STDOUT_FILENO) == -1)
+			return ;
+		close(pipex->fd[1]);
+		if (execve(pipex->cmd2, pipex->args2, envp) == -1)
+			return (wrong_args(6));
+	}
 }
+
+// void	execCmd1(t_pipex *pipex, char **av)
+// {
+// 	int	fd[2];
+// 	int	pid;
+
+// 	fd[2] = open(av[1], O_WRONLY | O_CREAT, 0644);
+// 	if (pipe(fd) == -1)
+// 	{
+// 		printf("fail\n");
+// 		return ;
+// 	}
+// 	pid = fork();
+// 	if (pid == 0)
+// 	{
+// 		dup2(fd[2], STDOUT_FILENO);
+// 		execve(pipex->cmd2, pipex->args2, NULL);
+// 	}
+// 	close(fd[2]);
+// }
 
 int	main(int ac, char **av, char **envp)
 {
@@ -123,7 +162,16 @@ int	main(int ac, char **av, char **envp)
 		free_tab(pipex);
 		return (-1);
 	}
-	execCmd1(pipex, av);
+	pipex->fd1 = open(av[1], O_RDONLY);
+	pipex->fd2 = open(av[4], O_RDWR | O_CREAT, 0644);
+	if (pipex->fd1 < 0 || pipex->fd2 < 0)
+	{
+		wrong_args(5);
+		return (0);
+	}
+	if (pipe(pipex->fd) == -1)
+		return (0);
+	exec_cmd(pipex, av);
 	free_tab(pipex);
 	return (0);
 }

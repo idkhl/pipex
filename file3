@@ -1,9 +1,1 @@
-total 40
--rw-r--r-- 1 idakhlao 2023_paris  1423 Apr 11 18:12 Makefile
--rw-r--r-- 1 idakhlao 2023_paris     0 Apr 18 18:25 a
--rw-r--r-- 1 idakhlao 2023_paris    49 Apr 18 18:28 file3
-drwxr-xr-x 2 idakhlao 2023_paris    55 Apr 11 18:12 includes
-drwxr-xr-x 2 idakhlao 2023_paris  4096 Apr 15 12:14 libft
--rwxr-xr-x 1 idakhlao 2023_paris 23648 Apr 18 18:25 pipex
-drwxr-xr-x 2 idakhlao 2023_paris   225 Apr 15 12:14 printf
-drwxr-xr-x 2 idakhlao 2023_paris    48 Apr 18 18:24 src
+0

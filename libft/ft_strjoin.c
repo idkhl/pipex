@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/10 09:59:18 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/04/13 13:49:27 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/04/19 16:41:35 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@
 // 	str = malloc((ft_strlen(s1) + ft_strlen(s2) + 1) * sizeof(char));
 // 	if (str == NULL)
 // 	{
-// 		if (s1_allocated) // If s1 was dynamically allocated, free it before returning NULL
+// 		if (s1_allocated) 
 // 			free(s1);
 // 		return (NULL);
 // 	}

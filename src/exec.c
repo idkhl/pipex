@@ -6,13 +6,8 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:18:21 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/04/17 09:38:03 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/04/19 16:43:50 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/pipex.h"
-
-void	init_tab(char *av)
-{
-	
-}
