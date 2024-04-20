@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 18:18:08 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/04/19 19:39:31 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/04/20 14:15:27 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ char	**get_paths(char **envp)
 	char	*tmp;
 	char	**path;
 
-	tmp = getPathLine(envp);
+	tmp = get_pathline(envp);
 	if (!tmp)
 		return (NULL);
 	tmp += 5;
@@ -76,12 +76,12 @@ char	**get_paths(char **envp)
 
 int	parsing(char **av, char **envp, t_pipex *pipex)
 {
-	
+	access(av[1], F_OK);
 	pipex->args1 = ft_split(av[2], ' ');
 	pipex->args2 = ft_split(av[3], ' ');
 	if (!pipex->args1 || !pipex->args2)
 		return (0);
-	pipex->path = getPaths(envp);
+	pipex->path = get_paths(envp);
 	pipex->cmd1 = parse_cmd(pipex->args1, pipex);
 	pipex->cmd2 = parse_cmd(pipex->args2, pipex);
 	if (access(av[1], R_OK) == -1)
@@ -155,6 +155,8 @@ int	main(int ac, char **av, char **envp)
 	if (ac != 5 || !av)
 		return (wrong_args(1), -1);
 	pipex = (t_pipex *)malloc(sizeof(t_pipex));
+	if(!envp || !*envp)
+		return (-1);
 	if (!pipex)
 		return (wrong_args(4), -1);
 	if (parsing(av, envp, pipex) == -1)
