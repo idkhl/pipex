@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 18:18:08 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/04/20 14:15:27 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/04/20 19:24:49 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ char	*parse_cmd(char **arg, t_pipex *pipex)
 	int		i;
 
 	i = 0;
-	while (pipex->path[i])
+	while (pipex->path && pipex->path[i])
 	{
 		tmp = ft_strjoin(pipex->path[i], "/");
 		bin = ft_strjoin(tmp, arg[0]);
@@ -50,11 +50,14 @@ char	*parse_cmd(char **arg, t_pipex *pipex)
 
 char	*get_pathline(char **envp)
 {
-	while (envp)
+	int i = 0;
+	while (envp[i])
 	{
-		if (ft_strncmp(*envp, "PATH=", 5) == 0)
-			return (*envp);
-		envp++;
+		if (ft_strncmp(envp[i], "PATH=", 5) == 0)
+			return (envp[i]);
+			// return (*envp);
+		// envp++;
+		i++;
 	}
 	return (NULL);
 }
@@ -76,7 +79,7 @@ char	**get_paths(char **envp)
 
 int	parsing(char **av, char **envp, t_pipex *pipex)
 {
-	access(av[1], F_OK);
+	access(av[4], F_OK);
 	pipex->args1 = ft_split(av[2], ' ');
 	pipex->args2 = ft_split(av[3], ' ');
 	if (!pipex->args1 || !pipex->args2)
@@ -93,12 +96,18 @@ int	parsing(char **av, char **envp, t_pipex *pipex)
 
 void	free_tab(t_pipex *pipex)
 {
-	malloc_free(pipex->args1);
-	malloc_free(pipex->args2);
-	malloc_free(pipex->path);
-	free(pipex->cmd1);
-	free(pipex->cmd2);
-	free(pipex);
+	if (pipex->args1)
+		malloc_free(pipex->args1);
+	if (pipex->args2)
+		malloc_free(pipex->args2);
+	if (pipex->path)
+		malloc_free(pipex->path);
+	if (pipex->cmd1)
+		free(pipex->cmd1);
+	if(pipex->cmd2)
+		free(pipex->cmd2);
+	if (pipex)
+		free(pipex);
 }
 
 void	exec_cmd(t_pipex *pipex, char **envp)
@@ -110,43 +119,29 @@ void	exec_cmd(t_pipex *pipex, char **envp)
 		return ;
 	if (pid == 0)
 	{
-		if (dup2(pipex->fd1, STDIN_FILENO) == -1
-			|| dup2(pipex->fd[1], STDOUT_FILENO) == -1)
+		pipex->fd1 = open("a", O_RDONLY);
+		if (dup2(pipex->fd1, STDIN_FILENO) == -1 || dup2(pipex->fd[1], STDOUT_FILENO) == -1)
 			return ;
+		close(pipex->fd[1]);
 		close(pipex->fd[0]);
+		close(pipex->fd1);
 		if (execve(pipex->cmd1, pipex->args1, envp) == -1)
 			return (wrong_args(6));
 	}
 	else
 	{
+		pipex->fd2 = open("fileqtqee3", O_WRONLY | O_CREAT, 0644);
 		if (dup2(pipex->fd[0], STDIN_FILENO) == -1
 			|| dup2(pipex->fd2, STDOUT_FILENO) == -1)
 			return ;
 		close(pipex->fd[1]);
+		close(pipex->fd[0]);
+		close(pipex->fd2);
+
 		if (execve(pipex->cmd2, pipex->args2, envp) == -1)
 			return (wrong_args(6));
 	}
 }
-
-// void	execCmd1(t_pipex *pipex, char **av)
-// {
-// 	int	fd[2];
-// 	int	pid;
-
-// 	fd[2] = open(av[1], O_WRONLY | O_CREAT, 0644);
-// 	if (pipe(fd) == -1)
-// 	{
-// 		printf("fail\n");
-// 		return ;
-// 	}
-// 	pid = fork();
-// 	if (pid == 0)
-// 	{
-// 		dup2(fd[2], STDOUT_FILENO);
-// 		execve(pipex->cmd2, pipex->args2, NULL);
-// 	}
-// 	close(fd[2]);
-// }
 
 int	main(int ac, char **av, char **envp)
 {
@@ -164,13 +159,16 @@ int	main(int ac, char **av, char **envp)
 		free_tab(pipex);
 		return (-1);
 	}
-	pipex->fd1 = open(av[1], O_RDONLY);
-	pipex->fd2 = open(av[4], O_RDWR | O_CREAT, 0644);
-	if (pipex->fd1 < 0 || pipex->fd2 < 0)
+	// pipex->fd1 = open(av[1], O_RDONLY);
+	pipex->fd2 = open(av[4], O_WRONLY | O_CREAT, 0644);
+	// if (pipex->fd1 < 0 || pipex->fd2 < 0)
+	if (pipex->fd2 < 0)
 	{
+		free_tab(pipex);
 		wrong_args(5);
 		return (0);
 	}
+	close(pipex->fd2);
 	if (pipe(pipex->fd) == -1)
 		return (0);
 	exec_cmd(pipex, av);
