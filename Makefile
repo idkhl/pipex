@@ -6,13 +6,13 @@
 #    By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/11 09:10:49 by idakhlao          #+#    #+#              #
-#    Updated: 2024/04/11 18:12:48 by idakhlao         ###   ########.fr        #
+#    Updated: 2024/04/22 11:59:20 by idakhlao         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = pipex
 
-SRCS = src/main.c
+SRCS = src/main.c src/utils.c
 OBJS = ${SRCS:.c=.o}
 CFLAGS = -Wall -Wextra -Werror -g3
 PRINTF = ./printf/libftprintf.a
