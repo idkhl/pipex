@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:18:21 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/04/22 12:03:34 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/04/22 18:12:06 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,4 +71,11 @@ void	free_tab(t_pipex *pipex)
 		free(pipex->cmd2);
 	if (pipex)
 		free(pipex);
+}
+
+void	close_fd(t_pipex *pipex, int fd)
+{
+	close(pipex->fd[1]);
+	close(pipex->fd[0]);
+	close(fd);
 }

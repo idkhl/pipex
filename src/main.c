@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 18:18:08 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/04/22 15:20:07 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/05/15 10:50:57 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,9 +77,7 @@ void	exec_cmd(t_pipex *pipex, char **av, char **envp)
 		if (dup2(pipex->fd1, STDIN_FILENO) == -1
 			|| dup2(pipex->fd[1], STDOUT_FILENO) == -1)
 			return ;
-		close(pipex->fd[1]);
-		close(pipex->fd[0]);
-		close(pipex->fd1);
+		close_fd(pipex, pipex->fd1);
 		if (execve(pipex->cmd1, pipex->args1, envp) == -1)
 			return (wrong_args(6));
 	}
@@ -89,9 +87,7 @@ void	exec_cmd(t_pipex *pipex, char **av, char **envp)
 		if (dup2(pipex->fd[0], STDIN_FILENO) == -1
 			|| dup2(pipex->fd2, STDOUT_FILENO) == -1)
 			return ;
-		close(pipex->fd[1]);
-		close(pipex->fd[0]);
-		close(pipex->fd2);
+		close_fd(pipex, pipex->fd2);
 		if (execve(pipex->cmd2, pipex->args2, envp) == -1)
 			return (wrong_args(6));
 	}
@@ -117,10 +113,7 @@ int	main(int ac, char **av, char **envp)
 	}
 	close(pipex->fd2);
 	if (parsing(av, envp, pipex) == -1)
-	{
-		free_tab(pipex);
-		return (-1);
-	}
+		return (free_tab(pipex), -1);
 	if (pipe(pipex->fd) == -1)
 		return (0);
 	exec_cmd(pipex, av, envp);
