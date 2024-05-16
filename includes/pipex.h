@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 18:13:00 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/05/15 15:25:55 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/05/16 12:27:01 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ typedef struct s_pipex
 	int		fd1;
 	int		fd2;
 	int		fd[2];
+	int		fd_prev;
 }	t_pipex;
 
 void	wrong_args(int nb);

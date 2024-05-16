@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 18:18:08 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/05/15 17:33:54 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/05/16 17:16:07 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ char	*parse_cmd(char **arg, t_pipex *pipex)
 	int		i;
 
 	i = 0;
+	if (access(*arg, F_OK | X_OK) == 0)
+		return (ft_strdup(*arg));
 	while (pipex->path && pipex->path[i])
 	{
 		tmp = ft_strjoin(pipex->path[i], "/");
@@ -48,7 +50,7 @@ void	init_pipex(t_pipex	*pipex)
 int	parsing(char **av, char **envp, t_pipex *pipex)
 {
 	init_pipex(pipex);
-	access(av[4], F_OK);
+	// access(av[4], F_OK);
 	pipex->args1 = ft_split(av[2], ' ');
 	pipex->args2 = ft_split(av[3], ' ');
 	pipex->path = NULL;
@@ -61,6 +63,11 @@ int	parsing(char **av, char **envp, t_pipex *pipex)
 		return (wrong_args(3), -1);
 	if (!pipex->cmd1 || !pipex->cmd2)
 		return (wrong_args(2), -1);
+	printf("%s\n", pipex->args1[0]);
+	printf("%s\n", pipex->args2[0]);
+	printf("%s\n", pipex->cmd1);
+	printf("%s\n", pipex->cmd2);
+	printf("%s\n", pipex->path[0]);
 	return (0);
 }
 
@@ -77,9 +84,9 @@ void	exec_cmd(t_pipex *pipex, char **av, char **envp)
 		if (dup2(pipex->fd1, STDIN_FILENO) == -1
 			|| dup2(pipex->fd[1], STDOUT_FILENO) == -1)
 			return ;
-		// close_fd(pipex, pipex->fd1);
-		close_fd(pipex, pipex->fd[0]);
-		close_fd(pipex, pipex->fd[1]);
+		close(pipex->fd1);
+		close(pipex->fd[0]);
+		close(pipex->fd[1]);
 		if (execve(pipex->cmd1, pipex->args1, envp) == -1)
 			return (wrong_args(6));
 	}
@@ -90,9 +97,9 @@ void	exec_cmd(t_pipex *pipex, char **av, char **envp)
 		if (dup2(pipex->fd[0], STDIN_FILENO) == -1
 			|| dup2(pipex->fd2, STDOUT_FILENO) == -1)
 			return ;
-		// close_fd(pipex, pipex->fd2);
-		close_fd(pipex, pipex->fd[0]);
-		close_fd(pipex, pipex->fd[1]);
+		close(pipex->fd2);
+		close(pipex->fd[1]);
+		close(pipex->fd[0]);
 		if (execve(pipex->cmd2, pipex->args2, envp) == -1)
 			return (wrong_args(6));
 	}
@@ -119,8 +126,8 @@ int	main(int ac, char **av, char **envp)
 	if (pipe(pipex.fd) == -1)
 		return (0);
 	exec_cmd(&pipex, av, envp);
-	close_fd(&pipex, pipex.fd[0]);
-	close_fd(&pipex, pipex.fd[1]);
+	close(pipex.fd[1]);
+	close(pipex.fd[0]);
 	waitpid(0, NULL, 0);
 	waitpid(0, NULL, 0);
 	free_tab(&pipex);
