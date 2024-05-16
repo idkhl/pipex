@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 18:13:00 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/04/22 18:12:43 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/05/15 15:25:55 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 # include "../includes/ft_printf.h"
 # include <errno.h>
 # include <fcntl.h>
-
+# include <sys/wait.h>
 typedef struct s_pipex
 {
 	char	**path;
