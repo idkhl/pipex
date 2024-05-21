@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 18:18:08 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/05/17 15:14:31 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/05/21 14:03:01 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,24 +50,16 @@ void	init_pipex(t_pipex	*pipex)
 int	parsing(char **av, char **envp, t_pipex *pipex)
 {
 	init_pipex(pipex);
-	// access(av[4], F_OK);
 	pipex->args1 = ft_split(av[2], ' ');
 	pipex->args2 = ft_split(av[3], ' ');
-	pipex->path = NULL;
+	// pipex->path = NULL;
 	if (!pipex->args1 || !pipex->args2)
 		return (-1);
 	pipex->path = get_paths(envp);
 	pipex->cmd1 = parse_cmd(pipex->args1, pipex);
 	pipex->cmd2 = parse_cmd(pipex->args2, pipex);
-	// if (access(av[1], R_OK) == -1)
-	// 	return (wrong_args(0), -1);
 	if (!pipex->cmd1 || !pipex->cmd2)
 		return (wrong_args(2), -1);
-	// printf("%s\n", pipex->args1[0]);
-	// printf("%s\n", pipex->args2[0]);
-	// printf("%s\n", pipex->cmd1);
-	// printf("%s\n", pipex->cmd2);
-	// printf("%s\n", pipex->path[0]);
 	return (0);
 }
 

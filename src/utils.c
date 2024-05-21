@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:18:21 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/05/17 15:14:18 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/05/21 14:43:25 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 void	wrong_args(int nb)
 {
 	char	*s;
+
 	if (nb == 1)
 		ft_printf("FORMAT SHOULD BE [./pipex file1 cmd1 cmd2 file2]\n");
 	else if (nb == 2)

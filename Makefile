@@ -6,7 +6,7 @@
 #    By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/11 09:10:49 by idakhlao          #+#    #+#              #
-#    Updated: 2024/05/17 16:22:31 by idakhlao         ###   ########.fr        #
+#    Updated: 2024/05/21 14:39:07 by idakhlao         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME = pipex
 BONUS = pipex_bonus
 
 SRCS = src/main.c src/utils.c
-SRCS_BONUS = src/pipex_bonus.c
+SRCS_BONUS = src/pipex_bonus.c src/utils_bonus.c
 OBJS = ${SRCS:.c=.o}
 OBJS_BONUS = ${SRCS_BONUS:.c=.o}
 CFLAGS = -Wall -Wextra -Werror -g3

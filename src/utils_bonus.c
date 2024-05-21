@@ -6,18 +6,19 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:18:21 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/05/17 16:24:00 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/05/21 18:06:34 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/pipex.h"
+#include "../includes/pipex_bonus.h"
 
 void	wrong_args(int nb)
 {
 	char	*s;
 
 	if (nb == 1)
-		ft_printf("FORMAT SHOULD BE [./pipex file1 cmd1 cmd2 file2]\n");
+		ft_printf("FORMAT SHOULD BE [ ./pipex file1 cmd1 cmd2 cmd3\
+		... cmdn file2]\n");
 	else if (nb == 2)
 		ft_printf("COMMAND DOES NOT EXIST\n");
 	else if (nb == 3)
@@ -65,21 +66,17 @@ char	**get_paths(char **envp)
 	return (path);
 }
 
-void	free_tab(t_pipex *pipex)
+void	free_tab(t_bonus *pipex)
 {
-	if (pipex->args1)
-		malloc_free(pipex->args1);
-	if (pipex->args2)
-		malloc_free(pipex->args2);
+	if (pipex->args)
+		malloc_free(*pipex->args);
 	if (pipex->path)
 		malloc_free(pipex->path);
-	if (pipex->cmd1)
-		free(pipex->cmd1);
-	if (pipex->cmd2)
-		free(pipex->cmd2);
+	// if (pipex->cmd)
+	// 	free(pipex->cmd);
 }
 
-void	close_fd(t_pipex *pipex, int fd)
+void	close_fd(t_bonus *pipex, int fd)
 {
 	close(pipex->fd[1]);
 	close(pipex->fd[0]);
