@@ -6,48 +6,55 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 16:24:24 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/05/21 20:07:38 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/05/22 16:35:49 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/pipex_bonus.h"
 
-// char	**parse_cmd(char ***arg, t_bonus *pipex)
-// {
-// 	char	*bin;
-// 	char	*tmp;
-// 	int		i;
-
-// 	i = 0;
-// 	if (access(*arg, F_OK | X_OK) == 0)
-// 		return (ft_strdup(*arg));
-// 	while (pipex->path && pipex->path[i])
-// 	{
-// 		tmp = ft_strjoin(pipex->path[i], "/");
-// 		if (!tmp)
-// 			return (NULL);
-// 		bin = ft_strjoin(tmp, arg[0]);
-// 		if (!bin)
-// 			return (free(tmp), NULL);
-// 		free(tmp);
-// 		if (access(bin, F_OK | X_OK) == 0)
-// 			return (bin);
-// 		free(bin);
-// 		i++;
-// 	}
-// 	return (NULL);
-// }
+char	*parse_cmd(char *arg, t_bonus *pipex)
+{
+	char	*bin;
+	char	*tmp;
+	int		i;
+	int		j;
+	i = 0;
+	if (access(arg, F_OK | X_OK) == 0)
+		return (ft_strdup(arg));
+	while (i < pipex->nb - 1)
+	{
+		j = 0;
+		while (pipex->path && pipex->path[j])
+		{
+			tmp = ft_strjoin(pipex->path[j], "/");
+			if (!tmp)
+				return (NULL);
+			bin = ft_strjoin(tmp, arg);
+			if (!bin)
+				return (free(tmp), NULL);
+			free(tmp);
+			if (access(bin, F_OK | X_OK) == 0)
+				return (bin);
+			free(bin);
+			j++;
+		}
+		i++;
+	}
+	return (arg);
+}
 
 void	init_pipex(t_bonus *pipex, int n)
 {
 	pipex->args = (char ***)malloc((n + 1) * sizeof(char **));
 	pipex->path = NULL;
-	pipex->cmd = NULL;
+	pipex->cmd = (char **)malloc((n) * sizeof(char *));
+	pipex->nb = n;
 }
 
 int	parsing(int ac, char **av, char **envp, t_bonus *pipex)
 {
 	int	i;
+	int	j;
 
 	init_pipex(pipex, ac);
 	i = 1;
@@ -60,20 +67,18 @@ int	parsing(int ac, char **av, char **envp, t_bonus *pipex)
 	if (!pipex->args)
 		return (-1);
 	pipex->path = get_paths(envp);
-	// pipex->cmd = parse_cmd(pipex->args, pipex);
-	// if (!pipex->cmd)
+	i = 1;
+	j = 0;
+	while (i < ac - 2)
+	{
+		printf("[%s]\n", pipex->args[i][0]);
+		pipex->cmd[j] = parse_cmd(pipex->args[i][0], pipex);
+		printf("cmd : [%s]\n", pipex->cmd[j]);
+		i++;
+	}
+	if (!pipex->cmd)
+		return (wrong_args(2), -1);
 	return (0);
-}
-
-void	free_tabx(char **tab)
-{
-	int i = 0;
-
-	if (!tab)
-		return ;
-	while (tab[i])
-		free(tab[i++]);
-	free(tab);
 }
 
 int	main(int ac, char **av, char **envp)
@@ -99,19 +104,17 @@ int	main(int ac, char **av, char **envp)
 	}
 	i = 0;
 	j = 0;
-	// int k = 0
 	if (pipex.args)
 	{
-		printf("1\n");
 		while (i < ac - 1)
 		{
-			free_tabx(pipex.args[i]);
+			malloc_free(pipex.args[i]);
 			i++;
 		}
 		free(pipex.args);
 	}
 	i = 0;
-	free_tabx(pipex.path);
+	malloc_free(pipex.path);
 }
 
 

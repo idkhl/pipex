@@ -1,0 +1,11 @@
+total 68$
+-rw-r--r-- 1 idakhlao 2023_paris     0 May 21 14:44 file2$
+drwxr-xr-x 2 idakhlao 2023_paris    76 May 21 11:09 includes$
+drwxr-xr-x 2 idakhlao 2023_paris  4096 May 22 12:35 libft$
+-rw-r--r-- 1 idakhlao 2023_paris  1627 May 22 12:03 Makefile$
+-rw-r--r-- 1 idakhlao 2023_paris     0 May 22 12:36 o$
+-rw-r--r-- 1 idakhlao 2023_paris   136 May 17 14:45 pb a regler$
+-rwxr-xr-x 1 idakhlao 2023_paris 25608 May 22 12:35 pipex$
+-rwxr-xr-x 1 idakhlao 2023_paris 24064 May 22 12:35 pipex_bonus$
+drwxr-xr-x 2 idakhlao 2023_paris   225 May 22 12:35 printf$
+drwxr-xr-x 2 idakhlao 2023_paris   150 May 22 12:35 src$
