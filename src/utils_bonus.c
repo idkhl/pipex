@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:18:21 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/05/21 18:06:34 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/05/23 14:01:55 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,12 +68,21 @@ char	**get_paths(char **envp)
 
 void	free_tab(t_bonus *pipex)
 {
+	int	i;
+
+	i = 0;
+	while (i < pipex->nb - 1)
+	{
+		malloc_free(pipex->args[i]);
+		i++;
+	}
+	free(pipex->args);
 	if (pipex->args)
 		malloc_free(*pipex->args);
 	if (pipex->path)
 		malloc_free(pipex->path);
-	// if (pipex->cmd)
-	// 	free(pipex->cmd);
+	if (pipex->cmd)
+		free(pipex->cmd);
 }
 
 void	close_fd(t_bonus *pipex, int fd)

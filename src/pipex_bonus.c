@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 16:24:24 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/05/22 16:35:49 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/05/23 15:12:30 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ char	*parse_cmd(char *arg, t_bonus *pipex)
 	char	*tmp;
 	int		i;
 	int		j;
+
 	i = 0;
 	if (access(arg, F_OK | X_OK) == 0)
 		return (ft_strdup(arg));
@@ -47,7 +48,7 @@ void	init_pipex(t_bonus *pipex, int n)
 {
 	pipex->args = (char ***)malloc((n + 1) * sizeof(char **));
 	pipex->path = NULL;
-	pipex->cmd = (char **)malloc((n) * sizeof(char *));
+	pipex->cmd = (char **)malloc((3) * sizeof(char *));
 	pipex->nb = n;
 }
 
@@ -91,17 +92,17 @@ int	main(int ac, char **av, char **envp)
 		return (free_tab(&pipex), -1);
 	int i = 0;
 	int j;
-	while (pipex.args[i])
-	{
-		j = 0;
-		printf("i = %d\n", i);
-		while (pipex.args[i][j])
-		{
-			printf("[%s]\n", pipex.args[i][j]);
-			j++;
-		}
-		i++;
-	}
+	// while (pipex.args[i])
+	// {
+	// 	j = 0;
+	// 	printf("i = %d\n", i);
+	// 	while (pipex.args[i][j])
+	// 	{
+	// 		printf("[%s]\n", pipex.args[i][j]);
+	// 		j++;
+	// 	}
+	// 	i++;
+	// }
 	i = 0;
 	j = 0;
 	if (pipex.args)
