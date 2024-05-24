@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 16:24:24 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/05/23 15:12:30 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/05/24 16:36:18 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,14 +41,14 @@ char	*parse_cmd(char *arg, t_bonus *pipex)
 		}
 		i++;
 	}
-	return (arg);
+	return (NULL);
 }
 
 void	init_pipex(t_bonus *pipex, int n)
 {
 	pipex->args = (char ***)malloc((n + 1) * sizeof(char **));
 	pipex->path = NULL;
-	pipex->cmd = (char **)malloc((3) * sizeof(char *));
+	pipex->cmd = (char **)malloc((n - 2) * sizeof(char *));
 	pipex->nb = n;
 }
 
@@ -72,14 +72,45 @@ int	parsing(int ac, char **av, char **envp, t_bonus *pipex)
 	j = 0;
 	while (i < ac - 2)
 	{
-		printf("[%s]\n", pipex->args[i][0]);
 		pipex->cmd[j] = parse_cmd(pipex->args[i][0], pipex);
-		printf("cmd : [%s]\n", pipex->cmd[j]);
+		if (pipex->cmd[j] == NULL)
+			return (wrong_args(2), -1);
 		i++;
+		j++;
 	}
-	if (!pipex->cmd)
-		return (wrong_args(2), -1);
 	return (0);
+}
+// void	mid_children(t_bonus *pipex, char **av, char **envp)
+// {
+	// while (i < pipex->nb - 3)
+	// {
+	// 	pid = fork
+	// }
+// }
+
+void	exec_cmd(t_bonus *pipex, char **av, char **envp)
+{
+	pid_t	pid;
+	int		i;
+
+	pid = fork();
+	if (pid < 0)
+		return ;
+	if (pid == 0)
+	{
+		pipex->fd1 = open(av[1], O_RDONLY, 0644);
+		if (pipex->fd1 == -1)
+		{
+			wrong_args(0);
+			return ;
+		}
+		if (dup2(pipex->fd1, STDIN_FILENO) == -1
+			|| dup2(pipex->fd[1], STDOUT_FILENO) == -1)
+			return ;
+		close(pipex->fd1);
+		close(pipex->fd[0]);
+		close(pipex->fd[1]);
+	}
 }
 
 int	main(int ac, char **av, char **envp)
@@ -88,10 +119,21 @@ int	main(int ac, char **av, char **envp)
 
 	if (ac < 5 || !av)
 		return (wrong_args(1), -1);
+	pipex.fd2 = open(av[ac - 1], O_WRONLY | O_CREAT, 0644);
+	if (pipex.fd2 < 0)
+	{
+		free_tab(&pipex);
+		wrong_args(0);
+		return (0);
+	}
+	close(pipex.fd2);
 	if (parsing(ac, av, envp, &pipex) == -1)
 		return (free_tab(&pipex), -1);
-	int i = 0;
-	int j;
+	if (pipe(pipex.fd) == -1)
+		return (0);
+	// exec_cmd(&pipex, av, envp);
+	// int i = 0;
+	// int j;
 	// while (pipex.args[i])
 	// {
 	// 	j = 0;
@@ -103,19 +145,13 @@ int	main(int ac, char **av, char **envp)
 	// 	}
 	// 	i++;
 	// }
-	i = 0;
-	j = 0;
-	if (pipex.args)
-	{
-		while (i < ac - 1)
-		{
-			malloc_free(pipex.args[i]);
-			i++;
-		}
-		free(pipex.args);
-	}
-	i = 0;
-	malloc_free(pipex.path);
+	// i = 0;
+	// while (pipex.cmd[i])
+	// {
+	// 	printf("cmd: [%s]\n", pipex.cmd[i]);
+	// 	i++;
+	// }
+	free_tab(&pipex);
 }
 
 
