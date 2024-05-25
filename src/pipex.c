@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 18:18:08 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/05/25 12:26:56 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/05/25 17:53:05 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,11 +60,11 @@ int	parsing(char **av, char **envp, t_pipex *pipex)
 	pipex->cmd2 = parse_cmd(pipex->args2, pipex);
 	if (!pipex->cmd1 || !pipex->cmd2)
 		return (wrong_args(2), -1);
-	printf("args1: [%s][%s]\n", pipex->args1[0], pipex->args1[1]);
-	printf("args2: [%s][%s]\n", pipex->args2[0], pipex->args2[1]);
-	printf("cmd1: [%s]\n", pipex->cmd1);
-	printf("cmd2: [%s]\n", pipex->cmd2);
-	printf("path: [%s]\n", pipex->path[0]);
+	// printf("args1: [%s][%s]\n", pipex->args1[0], pipex->args1[1]);
+	// printf("args2: [%s][%s]\n", pipex->args2[0], pipex->args2[1]);
+	// printf("cmd1: [%s]\n", pipex->cmd1);
+	// printf("cmd2: [%s]\n", pipex->cmd2);
+	// printf("path: [%s]\n", pipex->path[0]);
 	return (0);
 }
 

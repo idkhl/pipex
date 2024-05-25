@@ -2,6 +2,7 @@
 	"files.associations": {
 		"pipex.h": "c",
 		"fcntl.h": "c",
-		"errno.h": "c"
+		"errno.h": "c",
+		"wait.h": "c"
 	}
 }
