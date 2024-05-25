@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 18:18:08 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/05/25 17:53:05 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/05/25 19:33:56 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,21 @@ int	parsing(char **av, char **envp, t_pipex *pipex)
 	return (0);
 }
 
+void	child_process(t_pipex *pipex, char **av, char **envp)
+{
+	pipex->fd1 = open(av[1], O_RDONLY, 0644);
+	if (pipex->fd1 == -1)
+		return (wrong_args(0));
+	if (dup2(pipex->fd1, STDIN_FILENO) == -1
+		|| dup2(pipex->fd[1], STDOUT_FILENO) == -1)
+		return (wrong_args(0));
+	close(pipex->fd1);
+	close(pipex->fd[0]);
+	close(pipex->fd[1]);
+	if (execve(pipex->cmd1, pipex->args1, envp) == -1)
+		return (wrong_args(0));
+}
+
 void	exec_cmd(t_pipex *pipex, char **av, char **envp)
 {
 	pid_t	pid;
@@ -76,29 +91,14 @@ void	exec_cmd(t_pipex *pipex, char **av, char **envp)
 	if (pid < 0)
 		return ;
 	if (pid == 0)
-	{
-		pipex->fd1 = open(av[1], O_RDONLY, 0644);
-		if (pipex->fd1 == -1)
-		{
-			wrong_args(0);
-			return ;
-		}
-		if (dup2(pipex->fd1, STDIN_FILENO) == -1
-			|| dup2(pipex->fd[1], STDOUT_FILENO) == -1)
-			return ;
-		close(pipex->fd1);
-		close(pipex->fd[0]);
-		close(pipex->fd[1]);
-		if (execve(pipex->cmd1, pipex->args1, envp) == -1)
-			return (wrong_args(0));
-	}
+		child_process(pipex, av, envp);
 	pid = fork();
 	if (pid == 0)
 	{
 		pipex->fd2 = open(av[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (dup2(pipex->fd[0], STDIN_FILENO) == -1
 			|| dup2(pipex->fd2, STDOUT_FILENO) == -1)
-			return ;
+			return (wrong_args(0));
 		close(pipex->fd2);
 		close(pipex->fd[1]);
 		close(pipex->fd[0]);

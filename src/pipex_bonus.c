@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 16:24:24 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/05/25 18:18:20 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/05/25 19:41:55 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ int	parsing(int ac, char **av, char **envp, t_bonus *pipex)
 	}
 	return (0);
 }
+
 void	mid_children(t_bonus *pipex, char **envp)
 {
 	pid_t	pid;
@@ -130,7 +131,6 @@ void	exec_cmd(t_bonus *pipex, char **av, char **envp)
 		return ;
 	if (pid == 0)
 	{
-		// printf("!\n");
 		if (dup2(pipex->fd1, STDIN_FILENO) == -1
 			|| dup2(pipex->fd[1], STDOUT_FILENO) == -1)
 			return (wrong_args(0));

@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:18:21 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/05/24 11:41:36 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/05/25 19:39:49 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ void	free_tab(t_bonus *pipex)
 	// 	malloc_free(*pipex->args);
 	if (pipex->path)
 		malloc_free(pipex->path);
-	if (pipex->cmd)		//cond jump si malloc_free leak si free
+	if (pipex->cmd) //cond jump si malloc_free leak si free
 		malloc_free(pipex->cmd);
 }
 
