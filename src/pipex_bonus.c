@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 16:24:24 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/05/25 19:41:55 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/05/27 14:34:14 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,16 +154,20 @@ void	exec_cmd(t_bonus *pipex, char **av, char **envp)
 		return ;
 	if (pid == 0)
 	{
-		pipex->fd2 = open(av[pipex->nb - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		pipex->fd2 = open(av[pipex->nb - 1], \
+			O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (dup2(pipex->fd[0], STDIN_FILENO) == -1
 			|| dup2(pipex->fd2, STDOUT_FILENO) == -1)
+		{
 			return (wrong_args(0));
+		}
 		// close(pipex->fd2);
+		printf("test\n\n");
 		close(pipex->fd[0]);
 		close(pipex->fd[1]);
-		if (execve(pipex->cmd[pipex->nb - 4], \
-			pipex->args[pipex->nb - 3], envp) == -1)
+		if (execve(pipex->cmd[pipex->nb - 4], pipex->args[pipex->nb - 3], envp) == -1)
 			return (wrong_args(0));
+		printf("1\n");
 	}
 //	// close(pipex->fd[0]);
 //	// close(pipex->fd2);
