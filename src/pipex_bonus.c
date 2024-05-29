@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 16:24:24 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/05/27 14:34:14 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/05/29 13:06:05 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,101 +78,79 @@ int	parsing(int ac, char **av, char **envp, t_bonus *pipex)
 		i++;
 		j++;
 	}
+	pipex->cmd[j] = NULL;
 	return (0);
-}
-
-void	mid_children(t_bonus *pipex, char **envp)
-{
-	pid_t	pid;
-	int		i;
-	int		j;
-
-	i = 1;
-	j = 2;
-	while (j < pipex->nb - 3)
-	{
-		printf("mid\n");
-		if (pipe(pipex->fd) == -1)
-			return ;
-		pid = fork();
-		if (pid < 0)
-			return ;
-		if (pid == 0)
-		{
-			if (dup2(pipex->fd1, STDIN_FILENO) == -1
-				|| dup2(pipex->fd[1], STDOUT_FILENO) == -1)
-				return (wrong_args(0));
-			close(pipex->fd1);
-			close(pipex->fd[0]);
-			close(pipex->fd[1]);
-			if (execve(pipex->cmd[i], pipex->args[j], envp) == -1)
-				return (wrong_args(0));
-		}
-		close(pipex->fd1);
-		close(pipex->fd[1]);
-		pipex->fd1 = pipex->fd[0];
-		i++;
-		j++;
-	}
 }
 
 void	exec_cmd(t_bonus *pipex, char **av, char **envp)
 {
 	pid_t	pid;
+	int		i;
+	int		j;
 
-	pipex->fd1 = open(av[1], O_RDONLY);
-	if (pipex->fd1 == -1)
+	i = 2;
+	j = 0;
+	while (i <= pipex->nb - 2)
 	{
-		wrong_args(0);
-		return ;
-	}
-	pid = fork();
-	if (pid < 0)
-		return ;
-	if (pid == 0)
-	{
-		if (dup2(pipex->fd1, STDIN_FILENO) == -1
-			|| dup2(pipex->fd[1], STDOUT_FILENO) == -1)
+		if (pipe(pipex->fd) == -1)
 			return (wrong_args(0));
-		// close(pipex->fd1);
-		close(pipex->fd[0]);
-		close(pipex->fd[1]);
-		if (execve(pipex->cmd[0], pipex->args[0], envp) == -1)
+		pid = fork();
+		if (pid < 0)
 			return (wrong_args(0));
-	}
-//	// close(pipex->fd1);
-//	// close(pipex->fd[1]);
-	if (pipex->nb > 5)
-		mid_children(pipex, envp);
-	if (pipex->fd2 == -1)
-	{
-		wrong_args(0);
-		return ;
-	}
-	pid = fork();
-	if (pid < 0)
-		return ;
-	if (pid == 0)
-	{
-		pipex->fd2 = open(av[pipex->nb - 1], \
-			O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		if (dup2(pipex->fd[0], STDIN_FILENO) == -1
-			|| dup2(pipex->fd2, STDOUT_FILENO) == -1)
+		if (pid == 0)
 		{
-			return (wrong_args(0));
+			if (i == 2)
+			{
+				pipex->fd1 = open(av[1], O_RDONLY, 0644);
+				if (pipex->fd1 == -1)
+					return (wrong_args(0));
+				if (dup2(pipex->fd1, STDIN_FILENO) == -1
+					|| dup2(pipex->fd[1], STDOUT_FILENO) == -1)
+					return (wrong_args(0));
+				close(pipex->fd1);
+				close(pipex->fd[0]);
+				close(pipex->fd[1]);
+				if (execve(pipex->cmd[0], pipex->args[1], envp) == -1)
+					return (wrong_args(0));
+			}
+			else if (i == pipex->nb - 2)
+			{
+				pipex->fd2 = open(av[pipex->nb - 1], \
+					O_WRONLY | O_CREAT | O_TRUNC, 0644);
+				if (pipex->fd2 == -1)
+					return (wrong_args(0));
+				if (dup2(pipex->fd2, STDOUT_FILENO) == -1)
+					return (wrong_args(0));
+				close(pipex->fd2);
+				close(pipex->fd[0]);
+				close(pipex->fd[1]);
+				if (execve(pipex->cmd[pipex->nb - 4], \
+					pipex->args[pipex->nb - 3], envp) == -1)
+					return (wrong_args(0));
+			}
+			else
+			{
+				if (dup2(pipex->fd[1], STDOUT_FILENO) == -1)
+					return (wrong_args(2));
+				close(pipex->fd[0]);
+				close(pipex->fd[1]);
+				if (execve(pipex->cmd[j], pipex->args[j + 1], envp) == -1)
+					return (wrong_args(1), wrong_args(0));
+			}
+			if (dup2(pipex->fd[1], STDOUT_FILENO) == -1)
+				return (wrong_args(0));
+			close(pipex->fd[0]);
+			close(pipex->fd[1]);
 		}
-		// close(pipex->fd2);
-		printf("test\n\n");
+		if (dup2(pipex->fd[0], STDIN_FILENO) == -1)
+			return (wrong_args(0));
 		close(pipex->fd[0]);
 		close(pipex->fd[1]);
-		if (execve(pipex->cmd[pipex->nb - 4], pipex->args[pipex->nb - 3], envp) == -1)
-			return (wrong_args(0));
-		printf("1\n");
+		i++;
+		j++;
 	}
-//	// close(pipex->fd[0]);
-//	// close(pipex->fd2);
-	// while (wait(NULL) != -1)
-	// 	continue ;
+	while (wait(NULL) != -1)
+		continue ;
 }
 
 int	main(int ac, char **av, char **envp)
@@ -191,11 +169,7 @@ int	main(int ac, char **av, char **envp)
 	close(pipex.fd2);
 	if (parsing(ac, av, envp, &pipex) == -1)
 		return (free_tab(&pipex), -1);
-	if (pipe(pipex.fd) == -1)
-		return (0);
 	exec_cmd(&pipex, av, envp);
-	close(pipex.fd[1]);
-	close(pipex.fd[0]);
 	// int i = 0;
 	// int j;
 	// while (pipex.args[i])
@@ -217,19 +191,3 @@ int	main(int ac, char **av, char **envp)
 	// }
 	free_tab(&pipex);
 }
-
-// child                   1ere commande
-
-// 			DUP2;
-// child2                  toutes les commandes au milieu
-
-// child3					derniere commande 		
-
-// CODE PIPEX MADATORY
-
-// WHILE (i < NB_COMMANDE A EXECUTER)
-// {
-// 			fork
-// 			PIPE
-
-// MULTI PIPE;
