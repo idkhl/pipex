@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 18:18:08 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/05/29 11:38:36 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/05/29 13:11:05 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,21 +38,11 @@ char	*parse_cmd(char **arg, t_pipex *pipex)
 	return (NULL);
 }
 
-void	init_pipex(t_pipex	*pipex)
-{
-	pipex->args1 = NULL;
-	pipex->args2 = NULL;
-	pipex->path = NULL;
-	pipex->cmd1 = NULL;
-	pipex->cmd2 = NULL;
-}
-
 int	parsing(char **av, char **envp, t_pipex *pipex)
 {
 	init_pipex(pipex);
 	pipex->args1 = ft_split(av[2], ' ');
 	pipex->args2 = ft_split(av[3], ' ');
-	// pipex->path = NULL;
 	if (!pipex->args1 || !pipex->args2)
 		return (-1);
 	pipex->path = get_paths(envp);
@@ -60,11 +50,6 @@ int	parsing(char **av, char **envp, t_pipex *pipex)
 	pipex->cmd2 = parse_cmd(pipex->args2, pipex);
 	if (!pipex->cmd1 || !pipex->cmd2)
 		return (wrong_args(2), -1);
-	// printf("args1: [%s][%s]\n", pipex->args1[0], pipex->args1[1]);
-	// printf("args2: [%s][%s]\n", pipex->args2[0], pipex->args2[1]);
-	// printf("cmd1: [%s]\n", pipex->cmd1);
-	// printf("cmd2: [%s]\n", pipex->cmd2);
-	// printf("path: [%s]\n", pipex->path[0]);
 	return (0);
 }
 
@@ -133,64 +118,3 @@ int	main(int ac, char **av, char **envp)
 	free_tab(&pipex);
 	return (0);
 }
-
-
-// void	exec_cmd(t_bonus *pipex, char **av, char **envp)
-// {
-// 	pid_t	pid;
-
-// 	pipex->fd1 = open(av[1], O_RDONLY);
-// 	if (pipex->fd1 == -1)
-// 	{
-// 		wrong_args(0);
-// 		return ;
-// 	}
-// 	pid = fork();
-// 	if (pid < 0)
-// 		return (wrong_args(0));
-// 	if (pid == 0)
-// 	{
-// 		if (dup2(pipex->fd1, STDIN_FILENO) == -1
-// 			|| dup2(pipex->fd[1], STDOUT_FILENO) == -1)
-// 			return (wrong_args(0));
-// 		// close(pipex->fd1);
-// 		close(pipex->fd[0]);
-// 		close(pipex->fd[1]);
-// 		if (execve(pipex->cmd[0], pipex->args[1], envp) == -1)
-// 			return (wrong_args(0));
-// 	}
-// //	// close(pipex->fd1);
-// //	// close(pipex->fd[1]);
-// 	if (pipex->nb > 5)
-// 		mid_children(pipex, envp);
-// 	pid = fork();
-// 	if (pid < 0)
-// 		return ;
-// 	if (pid == 0)
-// 	{
-// 		pipex->fd2 = open(av[pipex->nb - 1], \
-// 			O_WRONLY | O_CREAT | O_TRUNC, 0644);
-// 		// printf("%d\n\n", dup2(pipex->fd[0], STDOUT_FILENO));
-// 		if (pipex->fd2 == -1)
-// 		{
-// 			wrong_args(0);
-// 			return ;
-// 		}
-// 		if (dup2(pipex->fd[0], STDIN_FILENO) == -1
-// 			|| dup2(pipex->fd2, STDOUT_FILENO) == -1)
-// 		{
-// 			return (wrong_args(0));
-// 		}
-// 		// close(pipex->fd2);
-// 		printf("test\n\n");
-// 		close(pipex->fd[0]);
-// 		close(pipex->fd[1]);
-// 		if (execve(pipex->cmd[pipex->nb - 4], pipex->args[pipex->nb - 3], envp) == -1)
-// 			return (wrong_args(0));
-// 		printf("1\n");
-// 	}
-// //	// close(pipex->fd[0]);
-// //	// close(pipex->fd2);
-// 	// while (wait(NULL) != -1)
-// 	// 	continue ;
-// }

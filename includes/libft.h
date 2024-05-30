@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:56:48 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/04/13 13:23:06 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/05/30 11:52:37 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ size_t	ft_strlcat(char *dst, char *src, size_t size);
 size_t	ft_strlen(char *str);
 char	*ft_strchr(char *s, int c);
 char	*ft_strrchr(char *s, int c);
+int		ft_strcmp(char *s1, char *s2);
 int		ft_strncmp(char *s1, char *s2, size_t n);
 void	*ft_memchr(void *s, int c, size_t n);
 int		ft_memcmp(void *s1, void *s2, size_t n);
@@ -59,6 +60,7 @@ char	**ft_split(char *s, char c);
 char	*ft_itoa(int n);
 void	ft_putendl_fd(char *s, int fd);
 char	*ft_strjoin(char *s1, char *s2);
+char	*ft_strjoin_gnl(char *s1, char *s2);
 char	**malloc_free(char	**tab);
 
 t_list	*ft_lstnew(void *content);

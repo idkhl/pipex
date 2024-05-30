@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 18:13:00 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/05/25 11:03:30 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/05/29 13:11:46 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ typedef struct s_pipex
 }	t_pipex;
 
 void	wrong_args(int nb);
+void	init_pipex(t_pipex	*pipex);
 char	**get_paths(char **envp);
 void	free_tab(t_pipex *pipex);
 void	close_fd(t_pipex *pipex, int fd);

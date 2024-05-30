@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:18:21 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/05/25 19:39:49 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/05/29 17:25:02 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,7 @@ void	wrong_args(int nb)
 	else if (nb == 2)
 		ft_printf("COMMAND DOES NOT EXIST\n");
 	else if (nb == 3)
-		ft_printf("FILE1 DOES NOT EXIST\n");
-	else if (nb == 4)
-		ft_printf("MEMORY ALLOCATION ERROR\n");
-	else if (nb == 5)
-		ft_printf("FD ERROR\n");
-	else if (nb == 6)
-		ft_printf("EXECUTION ERROR\n");
+		ft_printf("FORMAT SHOULD BE [./pipex here_doc LIMITER cmd cmd2 file]\n");
 	else
 	{
 		s = "Error";
@@ -80,11 +74,9 @@ void	free_tab(t_bonus *pipex)
 		}
 		free(pipex->args);
 	}
-	// if (pipex->args)
-	// 	malloc_free(*pipex->args);
 	if (pipex->path)
 		malloc_free(pipex->path);
-	if (pipex->cmd) //cond jump si malloc_free leak si free
+	if (pipex->cmd)
 		malloc_free(pipex->cmd);
 }
 

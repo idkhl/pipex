@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:18:21 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/05/25 17:03:03 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/05/29 13:11:11 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,15 @@ void	wrong_args(int nb)
 		perror(s);
 		exit(EXIT_FAILURE);
 	}
+}
+
+void	init_pipex(t_pipex	*pipex)
+{
+	pipex->args1 = NULL;
+	pipex->args2 = NULL;
+	pipex->path = NULL;
+	pipex->cmd1 = NULL;
+	pipex->cmd2 = NULL;
 }
 
 char	*get_pathline(char **envp)
@@ -77,11 +86,4 @@ void	free_tab(t_pipex *pipex)
 		free(pipex->cmd1);
 	if (pipex->cmd2)
 		free(pipex->cmd2);
-}
-
-void	close_fd(t_pipex *pipex, int fd)
-{
-	close(pipex->fd[1]);
-	close(pipex->fd[0]);
-	close(fd);
 }

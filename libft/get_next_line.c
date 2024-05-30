@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 10:54:33 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/04/09 11:52:18 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/05/30 11:52:23 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ char	*ft_read_and_stash(int fd, char *stash)
 			return (NULL);
 		}
 		buff[read_bytes] = '\0';
-		stash = ft_strjoin(stash, buff);
+		stash = ft_strjoin_gnl(stash, buff);
 	}
 	free(buff);
 	return (stash);
