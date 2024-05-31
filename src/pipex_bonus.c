@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 16:24:24 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/05/30 17:03:34 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/05/31 13:04:56 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ int	parsing(int ac, char **av, char **envp, t_bonus *pipex)
 	if (!pipex->args)
 		return (-1);
 	pipex->path = get_paths(envp);
-	i = 2; //multi  1, here_doc 2
+	i = pipex->index - 1; //multi  1, here_doc 2
 	j = 0;
 	while (i < ac - 2)
 	{
@@ -80,17 +80,38 @@ int	parsing(int ac, char **av, char **envp, t_bonus *pipex)
 		j++;
 	}
 	pipex->cmd[j] = NULL;
+	i = 0;
+	while (pipex->cmd[i])
+	{
+		printf("cmd: [%s]\n", pipex->cmd[i]);
+		i++;
+	}
 	return (0);
 }
 
-void	exec_cmd(t_bonus *pipex, char **av, char **envp, int index)
+int	tab_size(char	**tab)
+{
+	int	i;
+
+	i = 0;
+	if (!tab)
+		return (0);
+	while (tab[i])
+		i++;
+	return (i);
+}
+
+void	exec_cmd(t_bonus *pipex, char **av, char **envp)
 {
 	pid_t	pid;
 	int		i;
 	int		j;
+	int		size;
 
-	i = index;
+	i = pipex->index;
 	j = 0;
+	size = tab_size(pipex->cmd) - 1;
+
 	while (i <= pipex->nb - 2)
 	{
 		if (pipe(pipex->fd) == -1)
@@ -100,9 +121,9 @@ void	exec_cmd(t_bonus *pipex, char **av, char **envp, int index)
 			return (wrong_args(0));
 		if (pid == 0)
 		{
-			if (i == index)
+			if (i == pipex->index)
 			{
-				printf("CHILD 1\ncmd : %s\nargs : %s\n", pipex->cmd[0], pipex->args[i - 1][0]);
+				// printf("CHILD 1\ncmd : %s\nargs : %s\n", pipex->cmd[0], pipex->args[i - 1][0]);
 				pipex->fd1 = open(av[1], O_RDONLY, 0644);
 				if (pipex->fd1 == -1)
 					return (wrong_args(0));
@@ -117,7 +138,9 @@ void	exec_cmd(t_bonus *pipex, char **av, char **envp, int index)
 			}
 			else if (i == pipex->nb - 2)
 			{
-				printf("CHILD 3\ncmd : %s\nargs : %s\n", pipex->cmd[1], pipex->args[pipex->nb - 3][0]);
+				// printf("CHILD 3\ncmd : %s\nargs : %s\n", pipex->cmd[pipex->nb - 5], pipex->args[pipex->nb - 3][0]);
+				// printf("pipex->nb - 5 = %d\n", pipex->nb - 5);
+				// printf("pipex->nb - 2 + index = %d\n", tab_size(pipex->cmd));
 				pipex->fd2 = open(av[pipex->nb - 1], \
 					O_WRONLY | O_CREAT | O_TRUNC, 0644);
 				if (pipex->fd2 == -1)
@@ -127,13 +150,13 @@ void	exec_cmd(t_bonus *pipex, char **av, char **envp, int index)
 				close(pipex->fd2);
 				close(pipex->fd[0]);
 				close(pipex->fd[1]);
-				if (execve(pipex->cmd[pipex->nb - 4], \
+				if (execve(pipex->cmd[size], \
 					pipex->args[pipex->nb - 3], envp) == -1)
 					return (wrong_args(0));
 			}
 			else
 			{
-				printf("CHILD 2\ncmd : %s\nargs : %s\n", pipex->cmd[j], pipex->args[j + 1][0]);
+				// printf("CHILD 2\ncmd : %s\nargs : %s\n", pipex->cmd[j], pipex->args[j + 1][0]);
 				if (dup2(pipex->fd[1], STDOUT_FILENO) == -1)
 					return (wrong_args(2));
 				close(pipex->fd[0]);
@@ -181,12 +204,12 @@ int	here_doc(t_bonus *pipex, char *limiter, char **av, int ac)
 	pipex->fd1 = open(av[1], O_WRONLY | O_CREAT | O_APPEND, 0644);
 	while (line)
 	{
-		write(1, ">", 1);
 		if (ft_strcmp(lim, line) == 0)
 			return (0);
 		// ft_putendl_fd(line, pipex->fd[1]);
 		write(pipex->fd1, line, ft_strlen(line));
 		free(line);
+		write(1, ">", 1);
 		line = get_next_line(0);
 	}
 		// exit(1);
@@ -204,7 +227,7 @@ int	here_doc(t_bonus *pipex, char *limiter, char **av, int ac)
 int	main(int ac, char **av, char **envp)
 {
 	t_bonus	pipex;
-	int		i;
+	// int		i;
 
 	if (ac < 5 || !av)
 		return (wrong_args(1), -1);
@@ -212,43 +235,44 @@ int	main(int ac, char **av, char **envp)
 	if (pipex.fd2 < 0)
 		return (wrong_args(0), 0);
 	close(pipex.fd2);
-	if (parsing(ac, av, envp, &pipex) == -1)
-		return (free_tab(&pipex), -1);
-	i = 0;
-	int j;
-	while (pipex.args[i])
-	{
-		j = 0;
-		printf("i = %d\n", i);
-		while (pipex.args[i][j])
-		{
-			printf("[%s]\n", pipex.args[i][j]);
-			j++;
-		}
-		i++;
-	}
-	i = 0;
-	while (pipex.cmd[i])
-	{
-		printf("cmd: [%s]\n", pipex.cmd[i]);
-		i++;
-	}
+	// if (parsing(ac, av, envp, &pipex) == -1)
+	// 	return (free_tab(&pipex), -1);
+	// i = 0;
+	// int j;
+	// while (pipex.args[i])
+	// {
+	// 	j = 0;
+	// 	printf("i = %d\n", i);
+	// 	while (pipex.args[i][j])
+	// 	{
+	// 		printf("[%s]\n", pipex.args[i][j]);
+	// 		j++;
+	// 	}
+	// 	i++;
+	// }
+	// i = 0;
+	// while (pipex.cmd[i])
+	// {
+	// 	printf("cmd: [%s]\n", pipex.cmd[i]);
+	// 	i++;
+	// }
 	if (ft_strncmp(av[1], "here_doc", 8) == 0)
 	{
-		// if (parsing(ac, av, envp, &pipex) == -1)
-		// 	return (free_tab(&pipex), -1);
+		pipex.index = 3;
+		if (parsing(ac, av, envp, &pipex) == -1)
+			return (free_tab(&pipex), -1);
 		// printf("test\n");
-		i = 3;
 		if (here_doc(&pipex, av[2], av, ac) < 0)
 			return (0);
-		exec_cmd(&pipex, av, envp, i);
+		exec_cmd(&pipex, av, envp);
+		unlink("here_doc");
 	}
 	else
 	{
-		// if (parsing(ac, av, envp, &pipex) == -1)
-		// 	return (free_tab(&pipex), -1);
-		i = 2;
-		exec_cmd(&pipex, av, envp, i);
+		pipex.index = 2;
+		if (parsing(ac, av, envp, &pipex) == -1)
+			return (free_tab(&pipex), -1);
+		exec_cmd(&pipex, av, envp);
 	}
 	free_tab(&pipex);
 }
