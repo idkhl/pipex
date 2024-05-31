@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 11:09:15 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/05/31 12:56:12 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/05/31 16:14:07 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ typedef struct s_bonus
 	int		fd2;
 	int		fd[2];
 	int		index;
-	// int		fd_prev;
 }	t_bonus;
 
 void	wrong_args(int nb);

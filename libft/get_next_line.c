@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 10:54:33 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/05/30 11:52:23 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/05/31 15:18:05 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,10 @@ char	*ft_save(char *stash)
 	}
 	s = (char *)malloc(sizeof(char) * (ft_strlen(stash) - i + 1));
 	if (!s)
+	{
+		free(stash);
 		return (NULL);
+	}
 	i++;
 	c = 0;
 	while (stash[i])
