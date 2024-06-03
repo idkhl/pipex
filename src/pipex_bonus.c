@@ -6,11 +6,39 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 16:24:24 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/05/31 16:45:14 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/06/03 11:51:46 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/pipex_bonus.h"
+
+// char	*parse_cmd(char *arg, t_bonus *pipex)
+// {
+// 	char	*tmp;
+// 	int		i;
+// 	int		j;
+
+// 	if (access(arg, F_OK | X_OK) == 0)
+// 		return (ft_strdup(arg));
+// 	i = -1;
+// 	while (++i < pipex->nb - 1)
+// 	{
+// 		j = -1;
+// 		while (pipex->path && pipex->path[++j])
+// 		{
+// 			tmp = ft_strjoin(pipex->path[j], "/");
+// 			if (!tmp)
+// 				return (NULL);
+// 			tmp = ft_strjoin(tmp, arg);
+// 			if (!tmp)
+// 				return (free(tmp), NULL);
+// 			if (access(tmp, F_OK | X_OK) == 0)
+// 				return (tmp);
+// 			free(tmp);
+// 		}
+// 	}
+// 	return (NULL);
+// }
 
 char	*parse_cmd(char *arg, t_bonus *pipex)
 {
@@ -201,21 +229,12 @@ int	main(int ac, char **av, char **envp)
 	if (pipex.fd2 < 0)
 		return (wrong_args(0), 0);
 	close(pipex.fd2);
-	// if (ft_strncmp(av[1], "here_doc", 8) == 0)
-	// {
-	// 	pipex.index = 3;
-	// 	if (parsing(ac, av, envp, &pipex) == -1 || here_doc(&pipex, av[2], av, ac) < 0)
-	// 		return (free_tab(&pipex), -1);
-	// 	exec_cmd(&pipex, av, envp);
-	// 	unlink("here_doc");
-	// }
 	if (ft_strncmp(av[1], "here_doc", 8) == 0)
 	{
 		pipex.index = 3;
-		if (parsing(ac, av, envp, &pipex) == -1)
+		if (parsing(ac, av, envp, &pipex) == -1
+			|| here_doc(&pipex, av[2], av, ac) < 0)
 			return (free_tab(&pipex), -1);
-		if (here_doc(&pipex, av[2], av, ac) < 0)
-			return (free_tab(&pipex), 0);
 		exec_cmd(&pipex, av, envp);
 		unlink("here_doc");
 	}
