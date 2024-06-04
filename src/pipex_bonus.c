@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 16:24:24 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/06/04 14:21:16 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/06/04 17:33:23 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,20 +41,13 @@ char	*parse_cmd(char *arg, t_bonus *pipex)
 	return (NULL);
 }
 
-void	init_pipex(t_bonus *pipex, int n)
-{
-	pipex->args = (char ***)malloc((n + 1) * sizeof(char **));
-	pipex->args[0] = NULL;
-	pipex->path = NULL;
-	pipex->cmd = (char **)malloc((n - 2) * sizeof(char *));
-	pipex->nb = n;
-}
-
 int	parsing(int ac, char **av, char **envp, t_bonus *pipex)
 {
 	int	i;
 	int	j;
 
+	if (access(av[1], F_OK | X_OK) != 0)
+		return (ft_putendl_fd("Permission denied", 2), -2);
 	init_pipex(pipex, ac);
 	i = 0;
 	while (++i < ac)
@@ -106,9 +99,26 @@ int	here_doc(t_bonus *pipex, char *limiter, char **av, int ac)
 	return (0);
 }
 
+void	parse_heredoc(t_bonus pipex, int ac, char **av, char **envp)
+{
+	int	error;
+
+	pipex.index = 3;
+	error = parsing(ac, av, envp, &pipex);
+	if (error == -1)
+		return (free_tab(&pipex));
+	else if (error == -2)
+		return ;
+	if (pipe(pipex.fd) == -1)
+		return ;
+	exec_cmd(&pipex, envp);
+	unlink("here_doc");
+}
+
 int	main(int ac, char **av, char **envp)
 {
 	t_bonus	pipex;
+	int		error;
 
 	if (ac < 5 || !av)
 		return (wrong_args(1), -1);
@@ -117,19 +127,17 @@ int	main(int ac, char **av, char **envp)
 		return (wrong_args(0), 0);
 	close(pipex.fd2);
 	if (ft_strncmp(av[1], "here_doc", 8) == 0)
-	{
-		pipex.index = 3;
-		if (parsing(ac, av, envp, &pipex) == -1
-			|| here_doc(&pipex, av[2], av, ac) < 0)
-			return (free_tab(&pipex), -1);
-		exec_cmd(&pipex, envp);
-		unlink("here_doc");
-	}
+		parse_heredoc(pipex, ac, av, envp);
 	else
 	{
 		pipex.index = 2;
-		if (parsing(ac, av, envp, &pipex) == -1)
+		error = parsing(ac, av, envp, &pipex);
+		if (error == -1)
 			return (free_tab(&pipex), -1);
+		else if (error == -2)
+			return (-1);
+		if (pipe(pipex.fd) == -1)
+			return (0);
 		exec_cmd(&pipex, envp);
 	}
 	free_tab(&pipex);

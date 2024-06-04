@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 18:18:08 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/05/29 13:11:05 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/06/04 17:24:18 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,8 @@ char	*parse_cmd(char **arg, t_pipex *pipex)
 
 int	parsing(char **av, char **envp, t_pipex *pipex)
 {
+	if (access(av[1], F_OK | X_OK) != 0)
+		return (ft_putendl_fd("Permission denied", 2), -2);
 	init_pipex(pipex);
 	pipex->args1 = ft_split(av[2], ' ');
 	pipex->args2 = ft_split(av[3], ' ');
@@ -95,19 +97,19 @@ void	exec_cmd(t_pipex *pipex, char **av, char **envp)
 int	main(int ac, char **av, char **envp)
 {
 	t_pipex	pipex;
+	int		error;
 
 	if (ac != 5 || !av)
 		return (wrong_args(1), -1);
 	pipex.fd2 = open(av[4], O_WRONLY | O_CREAT, 0644);
 	if (pipex.fd2 < 0)
-	{
-		free_tab(&pipex);
-		wrong_args(0);
-		return (0);
-	}
+		return (wrong_args(0), 0);
 	close(pipex.fd2);
-	if (parsing(av, envp, &pipex) == -1)
+	error = parsing(av, envp, &pipex);
+	if (error == -1)
 		return (free_tab(&pipex), -1);
+	else if (error == -2)
+		return (-1);
 	if (pipe(pipex.fd) == -1)
 		return (0);
 	exec_cmd(&pipex, av, envp);
