@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 11:09:15 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/06/04 14:02:58 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/06/04 17:36:49 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,5 +38,6 @@ char	**get_paths(char **envp);
 void	free_tab(t_bonus *pipex);
 void	close_fd(t_bonus *pipex, int fd);
 int		tab_size(char	**tab);
+void	init_pipex(t_bonus *pipex, int n);
 
 #endif
