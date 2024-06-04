@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 18:18:08 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/06/04 17:24:18 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/06/04 19:04:20 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,6 @@ char	*parse_cmd(char **arg, t_pipex *pipex)
 
 int	parsing(char **av, char **envp, t_pipex *pipex)
 {
-	if (access(av[1], F_OK | X_OK) != 0)
-		return (ft_putendl_fd("Permission denied", 2), -2);
 	init_pipex(pipex);
 	pipex->args1 = ft_split(av[2], ' ');
 	pipex->args2 = ft_split(av[3], ' ');
@@ -59,7 +57,7 @@ void	child_process(t_pipex *pipex, char **av, char **envp)
 {
 	pipex->fd1 = open(av[1], O_RDONLY, 0644);
 	if (pipex->fd1 == -1)
-		return (wrong_args(0));
+		return (free_tab(pipex), wrong_args(0));
 	if (dup2(pipex->fd1, STDIN_FILENO) == -1
 		|| dup2(pipex->fd[1], STDOUT_FILENO) == -1)
 		return (wrong_args(0));
