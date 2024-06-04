@@ -6,7 +6,7 @@
 #    By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/11 09:10:49 by idakhlao          #+#    #+#              #
-#    Updated: 2024/05/22 12:03:28 by idakhlao         ###   ########.fr        #
+#    Updated: 2024/06/04 15:30:53 by idakhlao         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME = pipex
 BONUS = pipex_bonus
 
 SRCS = src/pipex.c src/utils.c
-SRCS_BONUS = src/pipex_bonus.c src/utils_bonus.c
+SRCS_BONUS = src/pipex_bonus.c src/utils_bonus.c src/exec_bonus.c
 OBJS = ${SRCS:.c=.o}
 OBJS_BONUS = ${SRCS_BONUS:.c=.o}
 CFLAGS = -Wall -Wextra -Werror -g3
@@ -39,12 +39,12 @@ start :
 	make -C libft all
 
 clean :
-	${RM} ${OBJS}
+	${RM} ${OBJS} ${OBJS_BONUS} 
 	make -C printf clean
 	make -C libft clean
 
 fclean : clean
-	${RM} ${NAME}
+	${RM} ${NAME} ${BONUS} 
 	make -C printf fclean
 	make -C libft fclean
 

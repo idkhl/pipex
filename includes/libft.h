@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 16:56:48 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/05/30 11:52:37 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/06/04 15:23:26 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,10 @@ void	ft_lstadd_back(t_list **lst, t_list *new);
 void	ft_lstclear(t_list **lst, void (*del)(void*));
 t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *));
 void	ft_lstiter(t_list *lst, void (*f)(void *));
+
+int		found_newlines(char *all_read);
+char	*ft_strcpy(char *dest, char *src);
+char	*ft_strncat(char *dest, char *src, int nb);
 
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 5

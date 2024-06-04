@@ -6,54 +6,25 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 16:24:24 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/06/03 11:51:46 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/06/04 14:21:16 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/pipex_bonus.h"
 
-// char	*parse_cmd(char *arg, t_bonus *pipex)
-// {
-// 	char	*tmp;
-// 	int		i;
-// 	int		j;
-
-// 	if (access(arg, F_OK | X_OK) == 0)
-// 		return (ft_strdup(arg));
-// 	i = -1;
-// 	while (++i < pipex->nb - 1)
-// 	{
-// 		j = -1;
-// 		while (pipex->path && pipex->path[++j])
-// 		{
-// 			tmp = ft_strjoin(pipex->path[j], "/");
-// 			if (!tmp)
-// 				return (NULL);
-// 			tmp = ft_strjoin(tmp, arg);
-// 			if (!tmp)
-// 				return (free(tmp), NULL);
-// 			if (access(tmp, F_OK | X_OK) == 0)
-// 				return (tmp);
-// 			free(tmp);
-// 		}
-// 	}
-// 	return (NULL);
-// }
-
 char	*parse_cmd(char *arg, t_bonus *pipex)
 {
 	char	*bin;
 	char	*tmp;
-	int		i;
 	int		j;
 
 	if (access(arg, F_OK | X_OK) == 0)
 		return (ft_strdup(arg));
-	i = 0;
-	while (i < pipex->nb - 1)
+	int (i) = -1;
+	while (++i < pipex->nb - 1)
 	{
-		j = 0;
-		while (pipex->path && pipex->path[j])
+		j = -1;
+		while (pipex->path && pipex->path[++j])
 		{
 			tmp = ft_strjoin(pipex->path[j], "/");
 			if (!tmp)
@@ -65,9 +36,7 @@ char	*parse_cmd(char *arg, t_bonus *pipex)
 			if (access(bin, F_OK | X_OK) == 0)
 				return (bin);
 			free(bin);
-			j++;
 		}
-		i++;
 	}
 	return (NULL);
 }
@@ -87,7 +56,7 @@ int	parsing(int ac, char **av, char **envp, t_bonus *pipex)
 	int	j;
 
 	init_pipex(pipex, ac);
-	i = 1;
+	i = 0;
 	while (++i < ac)
 		pipex->args[i - 1] = ft_split(av[i], ' ');
 	pipex->args[i] = NULL;
@@ -108,91 +77,6 @@ int	parsing(int ac, char **av, char **envp, t_bonus *pipex)
 	return (0);
 }
 
-int	tab_size(char	**tab)
-{
-	int	i;
-
-	i = 0;
-	if (!tab)
-		return (0);
-	while (tab[i])
-		i++;
-	return (i);
-}
-
-void	exec_cmd(t_bonus *pipex, char **av, char **envp)
-{
-	pid_t	pid;
-	int		i;
-	int		j;
-	int		size;
-
-	i = pipex->index;
-	j = 0;
-	size = tab_size(pipex->cmd) - 1;
-	while (i <= pipex->nb - 2)
-	{
-		if (pipe(pipex->fd) == -1)
-			return (wrong_args(0));
-		pid = fork();
-		if (pid < 0)
-			return (wrong_args(0));
-		if (pid == 0)
-		{
-			if (i == pipex->index)
-			{
-				pipex->fd1 = open(av[1], O_RDONLY, 0644);
-				if (pipex->fd1 == -1)
-					return (wrong_args(0));
-				if (dup2(pipex->fd1, STDIN_FILENO) == -1
-					|| dup2(pipex->fd[1], STDOUT_FILENO) == -1)
-					return (wrong_args(0));
-				close(pipex->fd1);
-				close(pipex->fd[0]);
-				close(pipex->fd[1]);
-				if (execve(pipex->cmd[0], pipex->args[i - 1], envp) == -1)
-					return (wrong_args(0));
-			}
-			else if (i == pipex->nb - 2)
-			{
-				pipex->fd2 = open(av[pipex->nb - 1], \
-					O_WRONLY | O_CREAT | O_TRUNC, 0644);
-				if (pipex->fd2 == -1)
-					return (wrong_args(0));
-				if (dup2(pipex->fd2, STDOUT_FILENO) == -1)
-					return (wrong_args(0));
-				close(pipex->fd2);
-				close(pipex->fd[0]);
-				close(pipex->fd[1]);
-				if (execve(pipex->cmd[size], \
-					pipex->args[pipex->nb - 3], envp) == -1)
-					return (wrong_args(0));
-			}
-			else
-			{
-				if (dup2(pipex->fd[1], STDOUT_FILENO) == -1)
-					return (wrong_args(2));
-				close(pipex->fd[0]);
-				close(pipex->fd[1]);
-				if (execve(pipex->cmd[j], pipex->args[j + 1], envp) == -1)
-					return (wrong_args(1), wrong_args(0));
-			}
-			if (dup2(pipex->fd[1], STDOUT_FILENO) == -1)
-				return (wrong_args(0));
-			close(pipex->fd[0]);
-			close(pipex->fd[1]);
-		}
-		if (dup2(pipex->fd[0], STDIN_FILENO) == -1)
-			return (wrong_args(0));
-		close(pipex->fd[0]);
-		close(pipex->fd[1]);
-		i++;
-		j++;
-	}
-	while (wait(NULL) != -1)
-		continue ;
-}
-
 int	here_doc(t_bonus *pipex, char *limiter, char **av, int ac)
 {
 	char	*line;
@@ -209,7 +93,10 @@ int	here_doc(t_bonus *pipex, char *limiter, char **av, int ac)
 	while (line)
 	{
 		if (ft_strcmp(lim, line) == 0)
+		{
+			printf("HEREEEEEE\n");
 			return (free(line), free(lim), 0);
+		}
 		write(pipex->fd1, line, ft_strlen(line));
 		free(line);
 		write(1, ">", 1);
@@ -235,7 +122,7 @@ int	main(int ac, char **av, char **envp)
 		if (parsing(ac, av, envp, &pipex) == -1
 			|| here_doc(&pipex, av[2], av, ac) < 0)
 			return (free_tab(&pipex), -1);
-		exec_cmd(&pipex, av, envp);
+		exec_cmd(&pipex, envp);
 		unlink("here_doc");
 	}
 	else
@@ -243,59 +130,7 @@ int	main(int ac, char **av, char **envp)
 		pipex.index = 2;
 		if (parsing(ac, av, envp, &pipex) == -1)
 			return (free_tab(&pipex), -1);
-		exec_cmd(&pipex, av, envp);
+		exec_cmd(&pipex, envp);
 	}
 	free_tab(&pipex);
 }
-
-	// int		i;
-	// i = 0;
-	// int j;
-	// while (pipex.args[i])
-	// {
-	// 	j = 0;
-	// 	printf("i = %d\n", i);
-	// 	while (pipex.args[i][j])
-	// 	{
-	// 		printf("[%s]\n", pipex.args[i][j]);
-	// 		j++;
-	// 	}
-	// 	i++;
-	// }
-	// i = 0;
-	// while (pipex.cmd[i])
-	// {
-	// 	printf("cmd: [%s]\n", pipex.cmd[i]);
-	// 	i++;
-	// }
-
-	// rechanger bin/tmp voir si ca leak
-	//mettre here doc fail & parsing fail dans le meme if
-
-// 	char	*parse_cmd(char *arg, t_bonus *pipex)
-// {
-// 	char	*tmp;
-// 	int		i;
-// 	int		j;
-
-// 	if (access(arg, F_OK | X_OK) == 0)
-// 		return (ft_strdup(arg));
-// 	i = -1;
-// 	while (++i < pipex->nb - 1)
-// 	{
-// 		j = -1;
-// 		while (pipex->path && pipex->path[++j])
-// 		{
-// 			tmp = ft_strjoin(pipex->path[j], "/");
-// 			if (!tmp)
-// 				return (NULL);
-// 			tmp = ft_strjoin(tmp, arg);
-// 			if (!tmp)
-// 				return (free(tmp), NULL);
-// 			if (access(tmp, F_OK | X_OK) == 0)
-// 				return (tmp);
-// 			free(tmp);
-// 		}
-// 	}
-// 	return (NULL);
-// }

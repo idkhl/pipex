@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 11:09:15 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/05/31 16:14:07 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/06/04 14:02:58 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,11 +29,14 @@ typedef struct s_bonus
 	int		fd2;
 	int		fd[2];
 	int		index;
+	int		pid;
 }	t_bonus;
 
+void	exec_cmd(t_bonus *pipex, char **envp);
 void	wrong_args(int nb);
 char	**get_paths(char **envp);
 void	free_tab(t_bonus *pipex);
 void	close_fd(t_bonus *pipex, int fd);
+int		tab_size(char	**tab);
 
 #endif

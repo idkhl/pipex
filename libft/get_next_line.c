@@ -6,128 +6,121 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/05 10:54:33 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/05/31 15:18:05 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/06/04 15:27:35 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/libft.h"
 
-//^extracts first line to \n of the string
-//^returns ptr to new mallocd string that contains the extracted line
-char	*ft_get_line(char *stash)
+char	*extract_line(char *all_read)
 {
 	int		i;
-	char	*s;
+	int		line_length;
+	char	*line;
 
 	i = 0;
-	if (!stash[i])
-		return (NULL);
-	while (stash[i] && stash[i] != '\n')
-		i++;
-	s = (char *)malloc(sizeof(char) * (i + 2));
-	if (!s)
-		return (NULL);
-	i = 0;
-	while (stash[i] && stash[i] != '\n')
+	line_length = 0;
+	while (all_read[line_length] && all_read[line_length] != '\n')
 	{
-		s[i] = stash[i];
+		line_length++;
+	}
+	if (all_read[line_length] == '\n')
+		line_length++;
+	line = malloc((line_length + 1) * sizeof(char));
+	if (!line)
+		return (NULL);
+	while (i < line_length)
+	{
+		line[i] = all_read[i];
 		i++;
 	}
-	if (stash[i] == '\n')
-	{
-		s[i] = stash[i];
-		i++;
-	}
-	s[i] = '\0';
-	return (s);
+	line[i] = '\0';
+	return (line);
 }
 
-//^ Deletes the first line to \n included
-//^ Returns a ptr to a new string
-char	*ft_save(char *stash)
+void	clean_read_line(char **all_read)
 {
 	int		i;
-	int		c;
-	char	*s;
+	int		j;
+	char	*temp;
 
+	j = 0;
+	while ((*all_read)[j] && (*all_read)[j] != '\n')
+		j++;
+	if ((*all_read)[j] == '\n')
+		j++;
+	temp = malloc((ft_strlen(*all_read) - j + 1) * sizeof(char));
+	if (!temp)
+		return ;
 	i = 0;
-	while (stash[i] && stash[i] != '\n')
-		i++;
-	if (!stash[i])
-	{
-		free(stash);
-		return (NULL);
-	}
-	s = (char *)malloc(sizeof(char) * (ft_strlen(stash) - i + 1));
-	if (!s)
-	{
-		free(stash);
-		return (NULL);
-	}
-	i++;
-	c = 0;
-	while (stash[i])
-		s[c++] = stash[i++];
-	s[c] = '\0';
-	free(stash);
-	return (s);
+	while ((*all_read)[j])
+		temp[i++] = (*all_read)[j++];
+	temp[i] = '\0';
+	free(*all_read);
+	*all_read = temp;
 }
 
-char	*ft_read_and_stash(int fd, char *stash)
+void	new_all_read(char **all_read, char *buffer, int nb_bytes_read)
 {
-	char	*buff;
-	int		read_bytes;
+	char	*temp;
+	int		all_read_length;
 
-	buff = malloc((BUFFER_SIZE + 1) * sizeof(char));
-	if (!buff)
-		return (NULL);
-	read_bytes = 1;
-	while (!ft_strchr(stash, '\n') && read_bytes != 0)
+	all_read_length = 0;
+	if (*all_read)
+		all_read_length = ft_strlen(*all_read);
+	temp = malloc((all_read_length + nb_bytes_read + 1) * sizeof(char));
+	if (!temp)
+		return ;
+	if (*all_read)
+		ft_strcpy(temp, *all_read);
+	ft_strncat(temp, buffer, nb_bytes_read);
+	free(*all_read);
+	*all_read = temp;
+}
+
+void	read_and_add(int fd, char **all_read)
+{
+	char		*buffer;
+	int			nb_bytes_read;
+
+	nb_bytes_read = 1;
+	while (!found_newlines(*all_read) && nb_bytes_read > 0)
 	{
-		read_bytes = read(fd, buff, BUFFER_SIZE);
-		if (read_bytes == -1)
+		buffer = malloc((BUFFER_SIZE + 1) * sizeof(char));
+		if (!buffer)
+			return ;
+		nb_bytes_read = (int)read(fd, buffer, BUFFER_SIZE);
+		if ((!(*all_read) && nb_bytes_read == 0) || nb_bytes_read == -1)
 		{
-			free(buff);
-			return (NULL);
+			free(buffer);
+			return ;
 		}
-		buff[read_bytes] = '\0';
-		stash = ft_strjoin_gnl(stash, buff);
+		buffer[nb_bytes_read] = '\0';
+		if (!(*all_read))
+			(*all_read) = ft_strdup("");
+		if (!(*all_read))
+			return ;
+		new_all_read(all_read, buffer, nb_bytes_read);
+		free(buffer);
 	}
-	free(buff);
-	return (stash);
 }
 
 char	*get_next_line(int fd)
 {
+	static char	*all_read;
 	char		*line;
-	static char	*stash;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
-		return (0);
-	stash = ft_read_and_stash(fd, stash);
-	if (!stash)
+	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
 		return (NULL);
-	line = ft_get_line(stash);
-	stash = ft_save(stash);
+	read_and_add(fd, &all_read);
+	if (!all_read)
+		return (NULL);
+	line = extract_line(all_read);
+	clean_read_line(&all_read);
+	if (all_read && *all_read == '\0')
+	{
+		free(all_read);
+		all_read = NULL;
+	}
 	return (line);
 }
-
-// #include <fcntl.h>
-// #include <stdio.h>
-
-// int	main(void)
-// {
-// 	int		fd;
-// 	char	*line;
-
-// 	fd = open("map1.ber", O_RDONLY);
-// 	while (1)
-// 	{
-// 		line = get_next_line(fd);
-// 		if (line == NULL)
-// 			break ;
-// 		printf("%s", line);
-// 		free(line);
-// 	}
-// 	return (0);
-// }

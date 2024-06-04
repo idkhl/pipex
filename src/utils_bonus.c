@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:18:21 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/05/31 14:47:55 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/06/04 13:59:34 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,9 +80,14 @@ void	free_tab(t_bonus *pipex)
 		malloc_free(pipex->cmd);
 }
 
-void	close_fd(t_bonus *pipex, int fd)
+int	tab_size(char	**tab)
 {
-	close(pipex->fd[1]);
-	close(pipex->fd[0]);
-	close(fd);
+	int	i;
+
+	i = 0;
+	if (!tab)
+		return (0);
+	while (tab[i])
+		i++;
+	return (i);
 }
