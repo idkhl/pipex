@@ -6,7 +6,7 @@
 #    By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/11 09:10:49 by idakhlao          #+#    #+#              #
-#    Updated: 2024/06/04 18:00:09 by idakhlao         ###   ########.fr        #
+#    Updated: 2024/06/06 12:11:09 by idakhlao         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,15 +23,21 @@ LIBFT = ./libft/libft.a
 CC = cc
 RM = rm -f
 
-all : $(NAME) 
+all : $(NAME)
+
+bonus: $(BONUS)
 
 .c.o:
 	cc $(CFLAGS) -c -o $@ $< 
 
-$(NAME): start $(OBJS)
+$(NAME): $(OBJS)
+	make -C printf all
+	make -C libft all
 	$(CC) $(CFLAGS) $(OBJS) -o $(NAME) $(PRINTF) $(LIBFT)
-
-bonus: start $(OBJS_BONUS)
+	
+$(BONUS): $(OBJS_BONUS)
+	make -C printf all
+	make -C libft all
 	$(CC) $(CFLAGS) $(OBJS_BONUS) -o $(BONUS) $(PRINTF) $(LIBFT)
 
 start :

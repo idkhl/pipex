@@ -6,7 +6,7 @@
 /*   By: idakhlao <idakhlao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 18:18:08 by idakhlao          #+#    #+#             */
-/*   Updated: 2024/06/04 19:04:20 by idakhlao         ###   ########.fr       */
+/*   Updated: 2024/06/06 15:19:21 by idakhlao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ int	parsing(char **av, char **envp, t_pipex *pipex)
 	pipex->args2 = ft_split(av[3], ' ');
 	if (!pipex->args1 || !pipex->args2)
 		return (-1);
+	printf("test\n\n");
 	pipex->path = get_paths(envp);
 	pipex->cmd1 = parse_cmd(pipex->args1, pipex);
 	pipex->cmd2 = parse_cmd(pipex->args2, pipex);
@@ -65,7 +66,7 @@ void	child_process(t_pipex *pipex, char **av, char **envp)
 	close(pipex->fd[0]);
 	close(pipex->fd[1]);
 	if (execve(pipex->cmd1, pipex->args1, envp) == -1)
-		return (wrong_args(0));
+		return (free_tab(pipex), wrong_args(0));
 }
 
 void	exec_cmd(t_pipex *pipex, char **av, char **envp)
@@ -88,7 +89,7 @@ void	exec_cmd(t_pipex *pipex, char **av, char **envp)
 		close(pipex->fd[1]);
 		close(pipex->fd[0]);
 		if (execve(pipex->cmd2, pipex->args2, envp) == -1)
-			return (wrong_args(0));
+			return (free_tab(pipex), wrong_args(0));
 	}
 }
 
